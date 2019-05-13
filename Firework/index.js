@@ -51,16 +51,16 @@ function getStartPoint(x, y, range) {
     if (y == undefined) {
         return [x, randomAtoB(range[0], range[1])];
     }
-    return [x,y];
+    return [x, y];
 }
 
-// 烟花
+// 标准烟花烟花
 function Firework(angle, hue) {
     // 烟花编号
     this.index = 0;
 
     // 起点
-    this.startPoint = getStartPoint(undefined, cHeight, [cWidth / 2 - 200, cWidth / 2 + 200]);
+    this.startPoint = getStartPoint(cWidth / 2, cHeight, [cWidth / 2 - 200, cWidth / 2 + 200]);
     // 当前位置点
     this.point = this.startPoint;
     // 缓存点
@@ -81,12 +81,12 @@ function Firework(angle, hue) {
     // 烟火已存在时间
     this.time = 0;
     // 烟火初速度
-    this.speed = 25;
+    this.speed = 110;
 
-    // 空气阻力
-    this.friction = 0.95;
+    // 空气阻力比例系数
+    this.friction = 0.00001;
     // 地心引力
-    this.gravitionalAcceleration = -0.1;
+    this.gravitionalAcceleration = -10;
 
     // 烟火亮度
     this.brightness = 50;
@@ -99,7 +99,7 @@ function Firework(angle, hue) {
     this.burstAmount = 60;
 
     // 烟火持续时间
-    this.durationTime = randomAtoB(6, 9);
+    this.durationTime = randomAtoB(9,11);
     // 烟火消失速度
     this.distinguishSpeed = 0.1;
 }
@@ -114,19 +114,21 @@ Firework.prototype.update = function(index) {
     this.track.unshift(this.point);
 
     // 计算此刻速度
-    this.speed *= this.friction;
+    this.speed = this.speed - Math.pow(this.speed, 2) * this.friction;
     // 更新烟花存在时间
     this.time += dt;
 
     // 计算此刻x和y方向上的速度
     var speedX = this.speed * Math.cos(this.angle);
-    var speedY = this.speed * Math.sin(this.angle) - this.gravitionalAcceleration * this.time;
-
+    var speedY = this.speed * Math.sin(this.angle);
     // 计算此刻所在位置
-    this.currentPoint = [this.point[0] + speedX * this.time, this.point[1] + speedY * this.time];
+    // this.currentPoint = [this.point[0] + speedX * dt, this.point[1] + speedY * dt];
+    this.currentPoint = [this.point[0] + speedX * dt, this.startPoint[1] + this.speed * Math.sin(this.angle) * this.time - 1/2 * this.gravitionalAcceleration * this.time * this.time];
+
     // 更新持续时间
-    this.durationTime -= this.distinguishSpeed;
+    this.durationTime = Number((this.durationTime - this.distinguishSpeed).toFixed(2));
 }
+firstTime = true;
 
 // 烟火方法 —— 检测烟花是否还存在
 // 如果持续时间等于0
@@ -139,6 +141,7 @@ Firework.prototype.update = function(index) {
 Firework.prototype.checkDurationTime = function(locaArray) {
     if (this.durationTime <= 0) {
         if (this.burst) {
+            logStatus('currentPoint', this.currentPoint);
             this.createSparks(this.currentPoint, this.hue);
         }
         locaArray.splice(this.index, 1);
@@ -166,7 +169,7 @@ Firework.prototype.draw = function() {
     ctx.stroke();
 }
 
-// 火花
+// 标准火花
 function Spark(startPoint, hue) {
 
     this.startPoint = startPoint;
@@ -179,7 +182,8 @@ function Spark(startPoint, hue) {
     // 烟火轨迹
     this.track = [];
     // 烟火轨迹长度
-    this.trackLength = Math.floor(randomAtoB(5, 10));
+    this.trackLength = 5;
+    // this.trackLength = Math.floor(randomAtoB(5, 5));
     // 创建轨迹
     for (var i = 0; i < this.trackLength; i++) {
         this.track.push(this.point);
@@ -191,12 +195,12 @@ function Spark(startPoint, hue) {
     this.time = 0;
 
     // 烟火初速度
-    this.speed = randomAtoB(1, 20);
+    this.speed = randomAtoB(10, 20);
 
     // 空气阻力
-    this.friction = 0.92;
+    this.friction = 0.00001;
 
-    this.gravitionalAcceleration = -0.1;
+    this.gravitionalAcceleration = -10;
 
     // 烟火亮度
     this.brightness = randomAtoB(20, 70);
@@ -209,7 +213,7 @@ function Spark(startPoint, hue) {
     this.burstAmount = 0;
 
     // 烟火持续时间
-    this.durationTime = randomAtoB(6, 9);
+    this.durationTime = randomAtoB(4, 3);
     this.distinguishSpeed = 0.1;
 
 }
@@ -248,7 +252,7 @@ function loop() {
     if (timerTick >= timerTotal) {
         if (!mousedown) {
             if (fireworks.length == 0) {
-                fireworks.push(new Firework(randomAtoB(255, 285) * Math.PI / 180, randomAtoB(0, 360)));
+                fireworks.push(new Firework(3/2 * Math.PI, randomAtoB(0, 360)));
             }
             timerTick = 0;
         }
@@ -265,6 +269,10 @@ function loop() {
     } else {
         limiteTick++;
     }
+}
+
+function logStatus(name, status) {
+    console.log(name + ':' + status + '\n');
 }
 
 // 添加鼠标事件
