@@ -22,12 +22,6 @@ function loop() {
         // fireworks[i].checkDurationTime(fireworks);
     }
 
-    var i = sparks.length;
-    while (i--) {
-        sparks[i].draw();
-        sparks[i].update(i,sparks);
-    }
-
     if (timerTick == timerTotal) {
         if (!mousedown) {
             if (fireworks.length == 0) {
