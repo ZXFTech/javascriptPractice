@@ -10,7 +10,7 @@ function loop() {
 
     // 设置画布图像显示方式
     ctx.globalCompositeOperation = 'destination-out';
-    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx.fillStyle = 'rgba(0,0,0,0.9)';
     ctx.fillRect(0, 0, cWidth, cHeight);
     ctx.globalCompositeOperation = 'lighter';
 
@@ -18,8 +18,14 @@ function loop() {
     var i = fireworks.length;
     while (i--) {
         fireworks[i].draw();
-        fireworks[i].update(i);
-        fireworks[i].checkDurationTime(fireworks);
+        fireworks[i].update(i,fireworks);
+        // fireworks[i].checkDurationTime(fireworks);
+    }
+
+    var i = sparks.length;
+    while (i--) {
+        sparks[i].draw();
+        sparks[i].update(i,sparks);
     }
 
     if (timerTick == timerTotal) {
