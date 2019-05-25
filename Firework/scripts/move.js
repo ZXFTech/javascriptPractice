@@ -45,23 +45,4 @@ function loop() {
     }
 }
 
-function logStatus(name, status) {
-    console.log(name + ':' + status + '\n');
-}
-
-// 添加鼠标事件
-canvas.addEventListener('mousemove', function(e) {
-    mAngle = Math.atan2(e.pageY - cHeight, e.pageX - cWidth / 2);
-})
-
-canvas.addEventListener('mousedown', function(e) {
-    e.preventDefault();
-    mousedown = true;
-})
-
-canvas.addEventListener('mouseup', function(e) {
-    e.preventDefault();
-    mousedown = false;
-})
-
 window.onload = loop;

@@ -1,53 +1,3 @@
-// 全局变量
-var canvas = document.getElementById("canvas");
-var ctx = canvas.getContext("2d");
-var cWidth = window.innerWidth;
-var cHeight = window.innerHeight;
-
-canvas.width = cWidth;
-canvas.height = cHeight;
-
-// 时间间隔
-var dt = 0.1;
-
-// 鼠标角度
-var mAngle;
-
-// 烟花自动释放间隔
-var timerTick = 0;
-var timerTotal = 80;
-
-// 烟花手动释放间隔
-var limiteTick = 0;
-var limiteTotal = 10;
-
-// 鼠标状态
-var mousedown = false;
-
-// 烟花队列
-var fireworks = [];
-// 火花队列
-var sparks = [];
-
-// 指定范围随机数
-function randomAtoB(A, B) {
-    return Math.random() * Math.abs(A - B) + Math.min(A, B);
-}
-
-// 生成起始点
-function getStartPoint(x, y, range) {
-    if (range == undefined) {
-        range = [0, 0];
-    }
-    if (x == undefined) {
-        return [randomAtoB(range[0], range[1]), y];
-    }
-    if (y == undefined) {
-        return [x, randomAtoB(range[0], range[1])];
-    }
-    return [x, y];
-}
-
 // 标准烟花烟花
 function Firework(startpoint, angle, hue) {
     // 烟花编号
@@ -99,12 +49,12 @@ function Firework(startpoint, angle, hue) {
     // 是否含有轨迹线烟花
     this.trackFirework = true;
     // 轨迹线烟花迸发数量
-    this.trackFireworkAmount = 2;
+    this.trackFireworkAmount = 5;
 
     // 是否含有下一级烟花
     this.leveldownFirework = true;
     // 烟花迸发数量
-    this.leveldownFireworkAmount = 1000;
+    this.leveldownFireworkAmount = 30;
 
     // 烟花持续时间
     this.durationTime = 10;
@@ -206,70 +156,3 @@ Firework.prototype.draw = function() {
     // ctx.strokeStyle = 'hsl(' + this.hue + ', 100%,' + this.brightness + '%)';
     // ctx.stroke();
 }
-
-// 标准火花
-function Spark(startpoint, angle, hue) {
-    // 烟花编号
-    this.index = 0;
-
-    // 起点
-    this.startPoint = startpoint;
-    // 缓冲点
-    this.point = this.startPoint;
-    // 当前位置 点
-    this.currentPoint = this.startPoint;
-
-    // 烟花轨迹
-    this.track = [];
-    // 烟花轨迹长度
-    this.trackLength = 2;
-    // 创建轨迹
-    for (var i = 0; i < this.trackLength; i++) {
-        this.track.push(this.startPoint);
-    }
-
-    // 烟花出射角
-    this.angle = angle;
-
-    // 烟花已存在时间
-    this.time = 0;
-    // 烟花初速度
-    this.speed = randomAtoB(5, 1);
-    // 烟花x方向分速度
-    this.speedX = this.speed * Number(Math.cos(this.angle).toFixed(5));
-    // 烟花y方向分速度
-    this.speedY = this.speed * Number(Math.sin(this.angle).toFixed(5));
-
-    // 空气阻力比例系数
-    this.friction = 0;
-    // 重力
-    this.g = .1;
-    // 浮力
-    this.flotage = -0.09;
-    // 推力
-    this.propulsion = -0.001;
-
-    // 烟花亮度
-    this.brightness = 50;
-    // 烟花颜色
-    this.hue = hue;
-
-    // 是否含有轨迹线烟花
-    this.trackFirework = false;
-    // 轨迹线烟花迸发数量
-    this.trackFireworkAmount = 10;
-
-    // 是否含有下一级烟花
-    this.leveldownburst = false;
-    // 烟花迸发数量
-    this.leveldownburstAmount = 30;
-
-    // 烟花持续时间
-    this.durationTime = randomAtoB(3, 5);
-    // 烟花消失速度
-    this.distinguishSpeed = 0.1;
-}
-
-// 设置继承
-Spark.prototype = Object.create(Firework.prototype);
-Spark.prototype.constructor = Spark;
