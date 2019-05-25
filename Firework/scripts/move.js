@@ -42,7 +42,7 @@ function loop() {
     // 手动释放烟火部分
     if (limiteTick >= limiteTotal) {
         if (mousedown) {
-            logStatus('mAngle', mAngle / Math.PI * 180);
+            // logStatus('mAngle', mAngle / Math.PI * 180);
             fireworks.push(new Firework([cWidth / 2, cHeight], mAngle, randomAtoB(0, 360)));
             limiteTick = 0;
         }

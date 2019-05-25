@@ -76,6 +76,11 @@ function Firework(startpoint, angle, hue) {
     this.time = 0;
     // 烟火初速度
     this.speed = 8;
+    // 烟火x方向分速度
+    this.speedX = this.speed * Number(Math.cos(this.angle).toFixed(5));
+    // 烟火y方向分速度
+    this.speedY = this.speed * Number(Math.sin(this.angle).toFixed(5));
+
 
     // 空气阻力比例系数
     this.friction = 0;
@@ -94,7 +99,7 @@ function Firework(startpoint, angle, hue) {
     // 烟火是否迸发
     this.burst = true;
     // 烟火迸发数量
-    this.burstAmount = 60;
+    this.burstAmount = 30;
 
     // 烟火持续时间
     this.durationTime = 10;
@@ -124,36 +129,36 @@ Firework.prototype.update = function(index,localArray) {
         // 计算此刻速度
         this.speed = this.speed - Math.pow(this.speed, 2) * this.friction;
 
-        // 计算此刻x和y方向上的速度
-        var speedX = this.speed * Number(Math.cos(this.angle).toFixed(5));
-        var speedY = this.speed * Number(Math.sin(this.angle).toFixed(5));
+        // // 计算此刻x和y方向上的速度
+        // var speedX = this.speed * Number(Math.cos(this.angle).toFixed(5));
+        // var speedY = this.speed * Number(Math.sin(this.angle).toFixed(5));
 
         // 计算此刻X和Y方向上的加速度
         this.aX = this.propulsion * Number(Math.cos(this.angle).toFixed(2));
         this.aY = this.propulsion * Number(Math.sin(this.angle).toFixed(2)) + this.flotage + this.g;
-
-        logStatus('aX', this.aX);
-        logStatus('aY', this.aY);
+        //
+        // logStatus('aX', this.aX);
+        // logStatus('aY', this.aY);
 
         // 计算此刻所在位置
         // this.currentPoint = [this.point[0] + speedX * dt, this.point[1] + speedY * dt];
-        this.currentPoint = [this.currentPoint[0] + speedX + 1 / 2 * this.aX, this.currentPoint[1] + speedY + 1 / 2 * this.aY];
+        this.currentPoint = [this.currentPoint[0] + this.speedX + 1 / 2 * this.aX, this.currentPoint[1] + this.speedY + 1 / 2 * this.aY];
 
-        logStatus('currentpoint', this.currentPoint);
+        // logStatus('currentpoint', this.currentPoint);
 
         // 更新烟花存在时间
         this.time += dt;
 
         // 计算x和y方向上加速后的速度
-        var speedX = Number((this.speed * Math.cos(this.angle)).toFixed(5)) + this.aX;
-        var speedY = Number((this.speed * Math.sin(this.angle)).toFixed(5)) + this.aY;
+        this.speedX = this.speedX + this.aX;
+        this.speedY = this.speedY + this.aY;
 
-        // 根据x和y方向上的分速度更新烟花速度
-        this.speed = Math.sqrt(speedX * speedX + speedY * speedY);
+        // // 根据x和y方向上的分速度更新烟花速度
+        // this.speed = Math.sqrt(this.speedX * this.speedX + this.speedY * this.speedY);
 
         // 更新此刻速度的方向
-        this.angle = Math.atan2(speedY, speedX);
-        logStatus('angle', this.angle / Math.PI * 180);
+        this.angle = Math.atan2(this.speedY, this.speedX);
+        // logStatus('angle', this.angle / Math.PI * 180);
 
         // 更新持续时间
         this.durationTime = Number((this.durationTime - this.distinguishSpeed).toFixed(5));
@@ -180,14 +185,16 @@ Firework.prototype.draw = function() {
         if (i == 0) {
             ctx.moveTo(this.track[i][0], this.track[i][1]);
         }
-        ctx.lineTo(this.track[i][0], this.track[i][1]);
+        else {
+            ctx.lineTo(this.track[i][0], this.track[i][1]);
+        }
     }
 
     ctx.strokeStyle = 'hsl(' + this.hue + ',100%,' + this.brightness + '%)';
     ctx.stroke();
 
-    // ctx.moveTo(this.track[this.trackLength - 1][0], this.track[this.trackLength - 1][1]);
-    // ctx.lineTo(this.point[0], this.point[1]);
+    // ctx.moveTo(this.track[this.track.length - 1][0], this.track[this.track.length - 1][1]);
+    // ctx.lineTo(this.currentPoint[0], this.currentPoint[1]);
     //
     // ctx.strokeStyle = 'hsl(' + this.hue + ', 100%,' + this.brightness + '%)';
     // ctx.stroke();
@@ -221,6 +228,10 @@ function Spark(startpoint,angle, hue) {
     this.time = 0;
     // 烟火初速度
     this.speed = randomAtoB(5,1);
+    // 烟火x方向分速度
+    this.speedX = this.speed * Number(Math.cos(this.angle).toFixed(5));
+    // 烟火y方向分速度
+    this.speedY = this.speed * Number(Math.sin(this.angle).toFixed(5));
 
     // 空气阻力比例系数
     this.friction = 0;
@@ -242,7 +253,7 @@ function Spark(startpoint,angle, hue) {
     this.burstAmount = 30;
 
     // 烟火持续时间
-    this.durationTime = randomAtoB(10,10);
+    this.durationTime = randomAtoB(3,5);
     // 烟火消失速度
     this.distinguishSpeed = 0.1;
 }
